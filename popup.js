@@ -108,41 +108,58 @@ async function generateImages() {
     const generateBtn = document.getElementById('generateBtn');
     generateBtn.disabled = true;
     
-    showStatus(`Generating ${selectedImages.size} images...`, 'loading');
+    showStatus(`Generating ${selectedImages.size} images in parallel...`, 'loading');
     
     try {
         const selectedImageData = images.filter(img => selectedImages.has(img.id));
+        const imageUrls = selectedImageData.map(img => img.src);
         
-        for (const imageData of selectedImageData) {
-            showStatus(`Processing image ${imageData.id + 1}...`, 'loading');
-            
-            const response = await fetch('http://localhost:3000/generate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    imageUrl: imageData.src
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            
-            if (result.success && result.imagePath) {
-                const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-                await chrome.tabs.sendMessage(tab.id, {
-                    action: 'replaceImage',
-                    imageId: imageData.id,
-                    newImageSrc: `http://localhost:3000/image/${result.imagePath}`
-                });
-            }
+        showStatus(`Processing ${selectedImageData.length} images simultaneously...`, 'loading');
+        
+        // Use the new batch endpoint for parallel processing
+        const response = await fetch('http://localhost:3000/generate-batch', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                imageUrls: imageUrls
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        showStatus('Images generated successfully!', 'success');
+        const batchResult = await response.json();
+        
+        if (batchResult.success && batchResult.results) {
+            showStatus(`Processing results: ${batchResult.summary.successful} successful, ${batchResult.summary.failed} failed...`, 'loading');
+            
+            // Process results and update images on the page
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            
+            for (const result of batchResult.results) {
+                if (result.success && result.imagePath) {
+                    const originalImageData = selectedImageData.find(img => img.src === result.originalUrl);
+                    if (originalImageData) {
+                        await chrome.tabs.sendMessage(tab.id, {
+                            action: 'replaceImage',
+                            imageId: originalImageData.id,
+                            newImageSrc: `http://localhost:3000/image/${result.imagePath}`
+                        });
+                    }
+                } else {
+                    console.warn(`Failed to generate image for ${result.originalUrl}:`, result.error);
+                }
+            }
+            
+            const successMessage = `Images generated! ${batchResult.summary.successful} successful, ${batchResult.summary.failed} failed`;
+            showStatus(successMessage, batchResult.summary.failed > 0 ? 'warning' : 'success');
+            
+        } else {
+            throw new Error('Batch processing failed');
+        }
         
     } catch (error) {
         console.error('Error generating images:', error);
