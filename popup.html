@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            width: 400px;
+            max-height: 600px;
+            margin: 0;
+            padding: 16px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .images-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+        }
+        
+        .image-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        
+        .image-item.selected {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        .image-preview {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 12px;
+        }
+        
+        .image-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .image-url {
+            font-size: 12px;
+            color: #666;
+            word-break: break-all;
+            margin-bottom: 4px;
+        }
+        
+        .checkbox {
+            margin-left: 8px;
+        }
+        
+        .controls {
+            margin-top: 16px;
+            text-align: center;
+        }
+        
+        .btn {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        
+        .btn:hover {
+            background-color: #1976d2;
+        }
+        
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .status.loading {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h3>Image AI Generator</h3>
+        <p>Select images to generate new versions</p>
+    </div>
+    
+    <div class="images-container" id="imagesContainer">
+        <p>Loading images...</p>
+    </div>
+    
+    <div class="controls">
+        <button class="btn" id="selectAllBtn">Select All</button>
+        <button class="btn" id="generateBtn" disabled>Generate</button>
+    </div>
+    
+    <div class="status hidden" id="status"></div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>

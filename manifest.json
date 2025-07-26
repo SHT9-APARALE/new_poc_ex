@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Image AI Generator",
+  "version": "1.0",
+  "description": "Extract images from web pages and generate new ones using AI",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Image AI Generator"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
