@@ -13,8 +13,7 @@ app.use(express.static('generated'));
 
 // Multiple API keys for parallel processing
 const API_KEYS = [
-    "AIzaSyD-_C6uibYTehH9XZIF0wvO9tVRcw7rge8",
-    "AIzaSyCdcrZf2W2hPgyor0ApGIiJQLJ_DU7h8vY",
+    "AIzaSyCWsMQJe8OWdjfhjfLxlf84D-W5UXsTTSI",
     // Add more API keys here for parallel processing
     // "YOUR_SECOND_API_KEY",
     // "YOUR_THIRD_API_KEY",

@@ -15,8 +15,14 @@ async function loadImages() {
         if (response && response.images) {
             images = response.images;
             renderImages();
+            
+            if (images.length > 0) {
+                showStatus(`Found ${images.length} images larger than 100x100px`, 'success');
+            } else {
+                showStatus('No images larger than 100x100px found on this page', 'error');
+            }
         } else {
-            showStatus('No images found on this page', 'error');
+            showStatus('No images larger than 100x100px found on this page', 'error');
         }
     } catch (error) {
         console.error('Error loading images:', error);
@@ -28,16 +34,16 @@ function renderImages() {
     const container = document.getElementById('imagesContainer');
     
     if (images.length === 0) {
-        container.innerHTML = '<p>No images found on this page</p>';
+        container.innerHTML = '<p>No images larger than 100x100px found on this page</p>';
         return;
     }
     
     container.innerHTML = images.map(image => `
         <div class="image-item" data-id="${image.id}">
-            <img src="${image.src}" alt="${image.alt}" class="image-preview" onerror="this.style.display='none'">
+            <img src="${image.src}" alt="${image.alt}" class="image-preview">
             <div class="image-info">
                 <div class="image-url">${image.src.substring(0, 60)}${image.src.length > 60 ? '...' : ''}</div>
-                <div style="font-size: 12px; color: #888;">${image.alt || 'No alt text'}</div>
+                <div style="font-size: 12px; color: #888;">${image.width && image.height ? `${image.width}x${image.height}px • ` : ''}${image.alt || 'No alt text'}</div>
             </div>
             <input type="checkbox" class="checkbox" data-id="${image.id}">
         </div>
@@ -56,6 +62,13 @@ function renderImages() {
     container.querySelectorAll('.checkbox').forEach(checkbox => {
         checkbox.addEventListener('change', (e) => {
             toggleImageSelection(parseInt(e.target.dataset.id), e.target.checked);
+        });
+    });
+    
+    // Add error handlers for images using proper event listeners
+    container.querySelectorAll('.image-preview').forEach(img => {
+        img.addEventListener('error', (e) => {
+            e.target.style.display = 'none';
         });
     });
 }
