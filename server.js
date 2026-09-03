@@ -13,7 +13,7 @@ app.use(express.static('generated'));
 
 // Multiple API keys for parallel processing
 const API_KEYS = [
-    "AIzaSyCWsMQJe8OWdjfhjfLxlf84D-W5UXsTTSI",
+    "YOUR_API_KEY",
     // Add more API keys here for parallel processing
     // "YOUR_SECOND_API_KEY",
     // "YOUR_THIRD_API_KEY",
@@ -62,7 +62,7 @@ async function generateImageFromGemini(imageUrl, apiKey = null) {
         ];
 
         const genResponse = await ai.models.generateContent({
-            model: "gemini-2.0-flash-preview-image-generation",
+            model: "gemini-3.1-flash-image",
             contents: contents,
             config: {
                 responseModalities: [Modality.TEXT, Modality.IMAGE],

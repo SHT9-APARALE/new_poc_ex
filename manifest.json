@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Image AI Generator",
+  "name": "Melanin",
   "version": "1.0",
   "description": "Extract images from web pages and generate new ones using AI",
   "permissions": [
